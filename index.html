@@ -21,18 +21,14 @@ h1{font-size:16px;font-weight:700;color:var(--accent2);letter-spacing:1px;white-
 .cat-btn{padding:4px 10px;border-radius:16px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
 .cat-btn:hover{border-color:var(--accent2);color:var(--text)}
 .cat-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-.mode-btn{padding:4px 11px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
-.mode-btn:hover{border-color:var(--accent2);color:var(--text)}
-.mode-btn.active{background:#1a3a4a;border-color:#4af;color:#8df;font-weight:600}
 .rand-btn{padding:4px 11px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
 .rand-btn:hover{border-color:var(--accent2);color:var(--text)}
 .rand-btn.on{background:#1a3a1a;border-color:#4f8;color:#8f8;font-weight:600}
 .sep{width:1px;height:18px;background:var(--border);flex-shrink:0}
 .cache-badge{font-size:10px;padding:2px 6px;border-radius:8px;background:#1a3a1a;color:#4f8}
 main{padding:14px;max-width:1400px;margin:0 auto}
-/* 記事グリッド */
-.grid-articles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;text-decoration:none;display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:transform .15s,border-color .15s;text-decoration:none;display:block}
 .card:hover{transform:translateY(-2px);border-color:var(--accent2)}
 .thumb-wrap{width:100%;aspect-ratio:16/9;background:var(--surface2);overflow:hidden}
 .thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .2s}
@@ -46,31 +42,16 @@ main{padding:14px;max-width:1400px;margin:0 auto}
 .tu{background:#2a2a4a;color:#aaf}.to{background:#2a2a2a;color:#aaa}.tm{background:#2a1a3a;color:#c9f}
 .card-title{font-size:13px;line-height:1.5;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .card-date{margin-top:6px;font-size:11px;color:var(--muted)}
-/* メディアグリッド */
-.grid-media{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.media-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative;display:flex;flex-direction:column}
-.media-card img{width:100%;display:block;object-fit:cover;aspect-ratio:16/9;background:var(--surface2);flex-shrink:0}
-.media-card video{width:100%;display:block;background:#000;flex-shrink:0;max-height:320px}
-.media-card iframe{width:100%;aspect-ratio:16/9;border:none;display:block;flex-shrink:0}
-.media-link{display:block;text-decoration:none;color:var(--muted);font-size:11px;padding:7px 10px;border-top:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .15s;margin-top:auto}
-.media-link:hover{color:var(--accent2)}
-.media-badge{position:absolute;top:8px;left:8px;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;text-transform:uppercase;pointer-events:none}
-.badge-video{background:#c0392b;color:#fff}.badge-photo{background:#1a3a4a;color:#8af}
-/* ステータス */
 .status{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
 .spin{display:inline-block;width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.sub-status{font-size:12px;color:var(--muted);margin-top:6px}
-.progress-bar{width:200px;height:3px;background:var(--border);border-radius:2px;margin:8px auto 0;overflow:hidden}
-.progress-fill{height:100%;background:var(--accent2);width:0%;transition:width .2s}
 .err{color:#f88}
 .retry-btn{margin-top:12px;padding:7px 18px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit}
 .retry-btn:hover{border-color:var(--accent2)}
 .bottom-nav{display:flex;align-items:center;gap:8px;justify-content:center;padding:24px 16px 32px}
 @media(max-width:600px){
   h1{font-size:13px}
-  .grid-articles{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-  .grid-media{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
   .card-title{font-size:12px}
 }
 </style>
@@ -79,10 +60,6 @@ main{padding:14px;max-width:1400px;margin:0 auto}
 <header>
   <div class="row1">
     <h1>PKK Viewer</h1>
-    <div class="sep"></div>
-    <button class="mode-btn" id="mb-article" onclick="setMode('article')">📰 記事</button>
-    <button class="mode-btn" id="mb-video"   onclick="setMode('video')">🎬 動画</button>
-    <button class="mode-btn" id="mb-photo"   onclick="setMode('photo')">🖼 写真</button>
     <div class="sep"></div>
     <button class="rand-btn" id="randbtn" onclick="toggleRandom()">🔀 ランダム</button>
     <span class="cache-badge" id="cachebadge" style="display:none">⚡ キャッシュ</span>
@@ -114,20 +91,19 @@ const CATS = [
   {label:'UFO&UMA', base:'https://www.po-kaki-to.com/archives/cat_157951'},
   {label:'その他',   base:'https://www.po-kaki-to.com/archives/cat_156879'},
 ];
-const RSS_PER_VIEW = 5;
-const MEDIA_CHUNK  = 10;
-const PROXIES = [
-  u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-  u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-  u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+const RSS_PER_VIEW=5;
+const PROXIES=[
+  u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+  u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
 ];
 
-let cat=0, page=1, mode='article', random=false;
+let cat=0, page=1, random=false;
 let cachedArticles=[], prefetchController=null, imgObserver=null, fromCache=false;
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-async function fetchFast(url) {
+async function fetchFast(url){
   const start=Date.now();
   const text=await Promise.any(
     PROXIES.map(pf=>
@@ -166,8 +142,7 @@ function prefetchNextPage(){
 }
 
 async function load(){
-  updateToolbar();
-  setLoading('読み込み中…');
+  setLoading();
   fromCache=false;
   const results=await Promise.allSettled(rssRange(page).map(p=>fetchFast(rssUrl(p))));
   cachedArticles=[];
@@ -175,142 +150,47 @@ async function load(){
   for(const r of results){ if(r.status==='fulfilled'){ cachedArticles.push(...parseRSS(r.value)); if(fromCache)anyCache=true; } }
   fromCache=anyCache;
   if(cachedArticles.length===0){showError('記事を取得できませんでした。');return;}
-  renderCurrent();
+  render();
   prefetchNextPage();
+  updateUI();
 }
 
-function renderCurrent(){
-  updateToolbar();
-  const arts=random?shuffle([...cachedArticles]):[...cachedArticles];
-  if(mode==='article') renderArticles(arts);
-  else renderMediaMode(arts);
-}
-
-function renderArticles(arts){
+function render(){
   if(imgObserver) imgObserver.disconnect();
   imgObserver=new IntersectionObserver(entries=>{
     entries.forEach(e=>{
       if(!e.isIntersecting)return;
-      const img=e.target, src=img.dataset.src;
+      const img=e.target,src=img.dataset.src;
       if(src){img.src=src;img.onload=()=>img.classList.add('loaded');img.onerror=()=>img.parentElement.innerHTML='<div class="no-thumb">📷</div>';}
       imgObserver.unobserve(img);
     });
   },{rootMargin:'200px'});
 
+  const arts=random?shuffle([...cachedArticles]):[...cachedArticles];
   const frag=document.createDocumentFragment();
-  const grid=document.createElement('div');
-  grid.className='grid-articles';
+  const grid=document.createElement('div'); grid.className='grid';
+
   arts.forEach(a=>{
     const card=document.createElement('a');
-    card.className='card';card.href=a.href;card.target='_blank';card.rel='noopener noreferrer';
+    card.className='card'; card.href=a.href; card.target='_blank'; card.rel='noopener noreferrer';
     const tw=document.createElement('div'); tw.className='thumb-wrap';
-    if(a.imgSrc){ const img=document.createElement('img'); img.dataset.src=a.imgSrc; img.alt=''; tw.appendChild(img); imgObserver.observe(img); }
-    else tw.innerHTML='<div class="no-thumb">📷</div>';
+    if(a.imgSrc){
+      const img=document.createElement('img'); img.dataset.src=a.imgSrc; img.alt='';
+      tw.appendChild(img); imgObserver.observe(img);
+    } else { tw.innerHTML='<div class="no-thumb">📷</div>'; }
     const tags=a.cats.length?`<div class="tags">${a.cats.map(c=>`<span class="tag ${tagClass(c)}">${c}</span>`).join('')}</div>`:'';
     const body=document.createElement('div'); body.className='card-body';
     body.innerHTML=`${tags}<div class="card-title">${a.title}</div>${a.date?`<div class="card-date">${a.date}</div>`:''}`;
     card.appendChild(tw); card.appendChild(body); grid.appendChild(card);
   });
+
   frag.appendChild(grid);
-  setContent(frag);
-}
-
-async function renderMediaMode(arts){
-  const total=arts.length;
   document.getElementById('content').innerHTML='';
-  const ph=document.createElement('div'); ph.className='status';
-  ph.innerHTML=`<div class="spin"></div><br>メディア抽出中…<div class="sub-status">0 / ${total} 件</div><div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>`;
-  const grid=document.createElement('div'); grid.className='grid-media';
-  document.getElementById('content').appendChild(ph);
-  document.getElementById('content').appendChild(grid);
-  updateNav();
-
-  // グローバル重複除去セット
-  const seenSrc=new Set();
-  let done=0;
-
-  for(let i=0;i<arts.length;i+=MEDIA_CHUNK){
-    const chunk=arts.slice(i,i+MEDIA_CHUNK);
-    const results=await Promise.allSettled(chunk.map(a=>fetchFast(a.href)));
-    results.forEach((r,j)=>{
-      done++;
-      const pbar=document.getElementById('pbar'); if(pbar) pbar.style.width=Math.round(done/total*100)+'%';
-      const sub=document.querySelector('.sub-status'); if(sub) sub.textContent=`${done} / ${total} 件`;
-      if(r.status!=='fulfilled')return;
-      const items=extractMedia(r.value,chunk[j].href,chunk[j].title);
-      items
-        .filter(m=>m.type===(mode==='video'?'video':'photo'))
-        .filter(m=>{ if(seenSrc.has(m.src))return false; seenSrc.add(m.src); return true; })
-        .forEach(m=>grid.appendChild(makeMediaCard(m)));
-    });
-  }
-  ph.remove();
-  if(grid.children.length===0) showError(`${mode==='video'?'動画':'写真'}が見つかりませんでした。`);
+  document.getElementById('content').appendChild(frag);
+  window.scrollTo({top:0,behavior:'smooth'});
   updateNav();
 }
 
-function makeMediaCard(m){
-  const card=document.createElement('div'); card.className='media-card';
-  let mediaEl;
-  if(m.type==='video'){
-    if(/youtube\.com\/embed|youtu\.be|nicovideo|dailymotion|streamtape|dood/.test(m.src)){
-      mediaEl=document.createElement('iframe');
-      mediaEl.src=m.src; mediaEl.allowFullscreen=true; mediaEl.loading='lazy';
-    } else {
-      mediaEl=document.createElement('video');
-      mediaEl.controls=true; mediaEl.preload='metadata'; // metadataでサムネ取得
-      mediaEl.src=m.src;
-    }
-  } else {
-    mediaEl=document.createElement('img');
-    mediaEl.src=m.src; mediaEl.loading='lazy'; mediaEl.alt='';
-    mediaEl.onerror=()=>{ card.style.display='none'; }; // 壊れ画像は非表示
-  }
-  const badge=document.createElement('span');
-  badge.className='media-badge '+(m.type==='video'?'badge-video':'badge-photo');
-  badge.textContent=m.type==='video'?'VIDEO':'PHOTO';
-  const link=document.createElement('a');
-  link.className='media-link'; link.href=m.articleUrl; link.target='_blank'; link.rel='noopener noreferrer';
-  link.textContent='📰 '+m.title;
-  card.appendChild(mediaEl); card.appendChild(badge); card.appendChild(link);
-  return card;
-}
-
-function extractMedia(html, articleUrl, title){
-  const doc=new DOMParser().parseFromString(html,'text/html');
-  const entry=doc.querySelector('.entry-content,.post-content,.article-body,article')||doc.body;
-  const items=[];
-  const seenLocal=new Set();
-
-  // video直接
-  entry.querySelectorAll('video').forEach(v=>{
-    const src=v.src||v.querySelector('source')?.src||v.querySelector('source')?.getAttribute('src')||'';
-    if(src&&!src.startsWith('data:')&&!seenLocal.has(src)){seenLocal.add(src);items.push({type:'video',src,articleUrl,title});}
-  });
-  // iframe（動画サービス）
-  entry.querySelectorAll('iframe[src]').forEach(el=>{
-    const src=el.src||el.getAttribute('src')||'';
-    if(!src) return;
-    // YouTube の watch URL を embed に変換
-    const ytMatch=src.match(/youtube\.com\/watch\?v=([\w-]+)/);
-    const finalSrc=ytMatch?`https://www.youtube.com/embed/${ytMatch[1]}`:src;
-    if(/youtube\.com\/embed|youtu\.be|nicovideo|dailymotion|streamtape|dood|vidoza|fembed/.test(finalSrc)&&!seenLocal.has(finalSrc)){
-      seenLocal.add(finalSrc);items.push({type:'video',src:finalSrc,articleUrl,title});
-    }
-  });
-  // 写真
-  entry.querySelectorAll('img[src],img[data-src]').forEach(el=>{
-    const src=el.getAttribute('src')||el.getAttribute('data-src')||'';
-    if(!src.includes('wp-content/uploads'))return;
-    if(/icon|banner|logo|continue|gif_anim|\.gif$/i.test(src))return;
-    const w=parseInt(el.getAttribute('width')||'0'), h=parseInt(el.getAttribute('height')||'0');
-    if(w&&w<100)return; if(h&&h<100)return;
-    if(!seenLocal.has(src)){seenLocal.add(src);items.push({type:'photo',src,articleUrl,title});}
-  });
-  return items;
-}
-
-// ── カテゴリバー構築 ──
 function buildCatBar(){
   const bar=document.getElementById('catBar'); bar.innerHTML='';
   CATS.forEach((c,i)=>{
@@ -322,21 +202,15 @@ function buildCatBar(){
   });
 }
 
-function updateToolbar(){
-  ['article','video','photo'].forEach(m=>{
-    const b=document.getElementById('mb-'+m);
-    if(b) b.classList.toggle('active',mode===m);
-  });
+function updateUI(){
   const rb=document.getElementById('randbtn');
-  if(rb){ rb.classList.toggle('on',random); rb.textContent='🔀 ランダム '+(random?'ON':'OFF'); }
-  const cb=document.getElementById('cachebadge');
-  if(cb) cb.style.display=fromCache?'':'none';
-  // カテゴリバーのactiveも更新
+  rb.classList.toggle('on',random);
+  rb.textContent='🔀 ランダム '+(random?'ON':'OFF');
+  document.getElementById('cachebadge').style.display=fromCache?'':'none';
   document.querySelectorAll('.cat-btn').forEach((b,i)=>b.classList.toggle('active',i===cat));
 }
 
-function setMode(m){ mode=m; updateToolbar(); renderCurrent(); }
-function toggleRandom(){ random=!random; updateToolbar(); renderCurrent(); }
+function toggleRandom(){ random=!random; updateUI(); render(); }
 
 function tagClass(n){
   n=n.toUpperCase();
@@ -350,9 +224,7 @@ function tagClass(n){
 }
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr; }
-
-function setContent(el){ document.getElementById('content').innerHTML=''; document.getElementById('content').appendChild(el); window.scrollTo({top:0,behavior:'smooth'}); updateNav(); }
-function setLoading(msg){ document.getElementById('content').innerHTML=`<div class="status"><div class="spin"></div><br>${msg}</div>`; updateNav(); }
+function setLoading(){ document.getElementById('content').innerHTML=`<div class="status"><div class="spin"></div><br>読み込み中…</div>`; updateNav(); }
 function showError(msg){ document.getElementById('content').innerHTML=`<div class="status err">${msg}<br><button class="retry-btn" onclick="load()">再試行</button></div>`; }
 function updateNav(){
   ['p1','p2'].forEach(id=>document.getElementById(id).disabled=page<=1);
