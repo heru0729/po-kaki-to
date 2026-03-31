@@ -3,55 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ポッカキット ビューアー</title>
+<title>PKK Viewer</title>
 <style>
-:root {
-  --bg:#0f0f0f; --surface:#1a1a1a; --surface2:#242424;
-  --border:#2e2e2e; --text:#e8e8e8; --muted:#777;
-  --accent:#c0392b; --accent2:#e74c3c;
-}
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:#2e2e2e;--text:#e8e8e8;--muted:#777;--accent:#c0392b;--accent2:#e74c3c}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pro','Meiryo',sans-serif;min-height:100vh}
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;position:sticky;top:0;z-index:100}
-.header-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-h1{font-size:17px;font-weight:700;color:var(--accent2);letter-spacing:1px;white-space:nowrap}
-.nav{display:flex;align-items:center;gap:8px;margin-left:auto}
-.page-btn{padding:5px 13px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;transition:border-color .15s;white-space:nowrap}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+h1{font-size:16px;font-weight:700;color:var(--accent2);letter-spacing:1px;white-space:nowrap}
+.spacer{flex:1}
+.nav{display:flex;align-items:center;gap:6px}
+.page-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;transition:border-color .15s;white-space:nowrap}
 .page-btn:hover{border-color:var(--accent2)}
 .page-btn:disabled{opacity:.3;cursor:default}
-.page-info{font-size:12px;color:var(--muted);white-space:nowrap;min-width:70px;text-align:center}
-.cat-bar{display:flex;gap:6px;flex-wrap:wrap}
-.cat-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
-.cat-btn:hover{border-color:var(--accent2);color:var(--text)}
+.page-info{font-size:12px;color:var(--muted);white-space:nowrap;min-width:60px;text-align:center}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.cat-btn,.mode-btn,.toggle-btn{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.cat-btn:hover,.mode-btn:hover,.toggle-btn:hover{border-color:var(--accent2);color:var(--text)}
 .cat-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-main{padding:16px;max-width:1400px;margin:0 auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.mode-btn.active{background:#1a3a4a;border-color:#4af;color:#8df;font-weight:600}
+.toggle-btn.on{background:#1a3a1a;border-color:#4f8;color:#8f8;font-weight:600}
+.sep{width:1px;height:20px;background:var(--border);margin:0 2px}
+main{padding:14px;max-width:1400px;margin:0 auto}
+.grid-articles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;text-decoration:none;display:block}
 .card:hover{transform:translateY(-2px);border-color:var(--accent2)}
-.thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--surface2)}
-.no-thumb{width:100%;aspect-ratio:16/9;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:28px}
+.thumb-wrap{width:100%;aspect-ratio:16/9;background:var(--surface2);overflow:hidden;position:relative}
+.thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .2s}
+.thumb-wrap img.loaded{opacity:1}
+.no-thumb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:28px}
 .card-body{padding:10px 12px}
 .tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
 .tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-.tg{background:#4a1535;color:#f9a}
-.td{background:#3a0f0f;color:#f88}
-.tc{background:#1a2a4a;color:#8af}
-.ta{background:#1a3a1a;color:#8f8}
-.tu{background:#2a2a4a;color:#aaf}
-.to{background:#2a2a2a;color:#aaa}
-.tm{background:#2a1a3a;color:#c9f}
+.tg{background:#4a1535;color:#f9a}.td{background:#3a0f0f;color:#f88}
+.tc{background:#1a2a4a;color:#8af}.ta{background:#1a3a1a;color:#8f8}
+.tu{background:#2a2a4a;color:#aaf}.to{background:#2a2a2a;color:#aaa}.tm{background:#2a1a3a;color:#c9f}
 .card-title{font-size:13px;line-height:1.5;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .card-date{margin-top:6px;font-size:11px;color:var(--muted)}
+.grid-media{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.media-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative}
+.media-card img{width:100%;display:block;object-fit:cover;aspect-ratio:16/9;background:var(--surface2)}
+.media-card video{width:100%;display:block;max-height:360px;background:#000}
+.media-card iframe{width:100%;aspect-ratio:16/9;border:none;display:block}
+.media-link{display:block;text-decoration:none;color:var(--muted);font-size:11px;padding:6px 10px;border-top:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .15s}
+.media-link:hover{color:var(--accent2)}
+.media-badge{position:absolute;top:8px;left:8px;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;text-transform:uppercase}
+.badge-video{background:#c0392b;color:#fff}.badge-photo{background:#1a2a4a;color:#8af}
 .status{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
 .spin{display:inline-block;width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.sub-status{font-size:12px;color:var(--muted);margin-top:6px}
+.progress-bar{width:200px;height:3px;background:var(--border);border-radius:2px;margin:8px auto 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent2);width:0%;transition:width .2s}
 .err{color:#f88}
 .retry-btn{margin-top:12px;padding:7px 18px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit}
 .retry-btn:hover{border-color:var(--accent2)}
+.cache-badge{font-size:10px;padding:2px 6px;border-radius:8px;background:#1a3a1a;color:#4f8;margin-left:6px;vertical-align:middle}
 .bottom-nav{display:flex;align-items:center;gap:8px;justify-content:center;padding:24px 16px 32px}
 @media(max-width:560px){
-  h1{font-size:14px}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  h1{font-size:13px}
+  .grid-articles{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .grid-media{grid-template-columns:1fr}
   .card-title{font-size:12px}
 }
 </style>
@@ -59,26 +71,27 @@ main{padding:16px;max-width:1400px;margin:0 auto}
 <body>
 <header>
   <div class="header-top">
-    <h1>ポッカキット Viewer</h1>
+    <h1>PKK Viewer</h1>
+    <div class="spacer"></div>
     <div class="nav">
       <button class="page-btn" id="p1" onclick="go(-1)">◀ 前</button>
       <span class="page-info" id="pi">-</span>
       <button class="page-btn" id="n1" onclick="go(1)">次 ▶</button>
     </div>
   </div>
-  <div class="cat-bar" id="catBar"></div>
+  <div class="toolbar" id="toolbar"></div>
 </header>
 
 <main><div id="content" class="status"><div class="spin"></div><br>読み込み中…</div></main>
 
 <div class="bottom-nav">
-  <button class="page-btn" id="p2" onclick="go(-1)">◀ 前のページ</button>
+  <button class="page-btn" id="p2" onclick="go(-1)">◀ 前</button>
   <span class="page-info" id="pi2">-</span>
-  <button class="page-btn" id="n2" onclick="go(1)">次のページ ▶</button>
+  <button class="page-btn" id="n2" onclick="go(1)">次 ▶</button>
 </div>
 
 <script>
-// カテゴリ定義
+// ── 設定 ──────────────────────────────
 const CATS = [
   {label:'全て',     base:'https://www.po-kaki-to.com'},
   {label:'エロ',     base:'https://www.po-kaki-to.com/archives/cat_201407'},
@@ -88,176 +101,336 @@ const CATS = [
   {label:'UFO&UMA', base:'https://www.po-kaki-to.com/archives/cat_157951'},
   {label:'その他',   base:'https://www.po-kaki-to.com/archives/cat_156879'},
 ];
+const RSS_PER_VIEW = 5;   // 1表示ページあたりのRSSページ数（約50記事）
+const MEDIA_CHUNK  = 10;  // 動画/写真モードの並列fetch数
 
-// 1ページあたりの件数（RSSを複数ページ分まとめて取得）
-const ARTICLES_PER_VIEW = 50;
-// RSSは1フィードあたり10件固定なので5ページ分並列取得
-const RSS_PAGES_PER_VIEW = 5;
-
-let cat = 0, page = 1;
-
-// CORSプロキシ（並列で全部投げて最速を使う）
 const PROXIES = [
   u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
   u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
   u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
 ];
 
-// 並列fetch：一番早く返ってきたものを採用
+let cat=0, page=1, mode='article', random=false;
+let cachedArticles=[];
+let prefetchController=null;
+let imgObserver=null;
+let fromCache=false;
+
+// ── Service Worker 登録 ──────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+
+// ── プロキシfetch（並列・最速採用） ──
 async function fetchFast(url) {
-  return Promise.any(
+  const start = Date.now();
+  const text = await Promise.any(
     PROXIES.map(pf =>
-      fetch(pf(url), {signal: AbortSignal.timeout(7000)})
+      fetch(pf(url), {signal: AbortSignal.timeout(8000)})
         .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
         .then(t => {
           try { const j=JSON.parse(t); if(j.contents) return j.contents; } catch(_){}
-          return t;
+          if(t.trim().startsWith('<')) return t;
+          throw new Error('invalid');
         })
     )
   );
+  fromCache = (Date.now() - start) < 80; // 80ms未満はキャッシュヒットとみなす
+  return text;
 }
 
-// RSSのURLを作る（WordPressのfeed、posts_per_page指定）
-function rssUrl(rssPaged) {
-  const b = CATS[cat].base;
-  // posts_per_page はサーバー側設定依存だが paged で複数ページ取れる
-  return `${b}/feed/?paged=${rssPaged}`;
-}
-
-// viewページ番号 → RSSの開始pagedを計算
-// viewPage=1 → rssPages 1〜5、viewPage=2 → 6〜10 ...
-function rssPageRange(viewPage) {
-  const start = (viewPage - 1) * RSS_PAGES_PER_VIEW + 1;
-  return Array.from({length: RSS_PAGES_PER_VIEW}, (_, i) => start + i);
-}
-
-function buildCatBar() {
-  const bar = document.getElementById('catBar');
-  CATS.forEach((c,i) => {
-    const b = document.createElement('button');
-    b.className = 'cat-btn' + (i===0?' active':'');
-    b.textContent = c.label;
-    b.onclick = () => { cat=i; page=1; selectCat(i); load(); };
-    bar.appendChild(b);
-  });
-}
-
-function selectCat(i) {
-  document.querySelectorAll('.cat-btn').forEach((b,j) => b.classList.toggle('active', i===j));
-}
-
-async function load() {
-  setLoading();
-
-  const pages = rssPageRange(page);
-
-  // 複数RSSページを並列取得
-  const results = await Promise.allSettled(pages.map(p => fetchFast(rssUrl(p))));
-
-  const articles = [];
-  for (const r of results) {
-    if (r.status === 'fulfilled') {
-      articles.push(...parseRSS(r.value));
-    }
-  }
-
-  if (articles.length === 0) {
-    showError('記事を取得できませんでした。プロキシが混雑している可能性があります。');
-    return;
-  }
-
-  render(articles);
+// ── RSS取得・パース ──────────────────
+function rssUrl(p) { return `${CATS[cat].base}/feed/?paged=${p}`; }
+function rssRange(vp) {
+  const s=(vp-1)*RSS_PER_VIEW+1;
+  return Array.from({length:RSS_PER_VIEW},(_,i)=>s+i);
 }
 
 function parseRSS(xml) {
   let doc;
-  try {
-    doc = new DOMParser().parseFromString(xml, 'application/xml');
-  } catch(_) { return []; }
-
-  return [...doc.querySelectorAll('item')].map(item => {
-    const title = item.querySelector('title')?.textContent?.trim() || '';
-    const href  = item.querySelector('link')?.textContent?.trim() || '';
-    const date  = item.querySelector('pubDate')?.textContent?.trim() || '';
-    const cats  = [...item.querySelectorAll('category')].map(c => c.textContent.trim());
-
-    let imgSrc = '';
-    const enc = item.querySelector('enclosure');
-    if (enc) imgSrc = enc.getAttribute('url') || '';
-    if (!imgSrc) {
-      const desc = item.querySelector('description')?.textContent || '';
-      const m = desc.match(/src=["']([^"']+wp-content\/uploads[^"']+\.(?:jpg|jpeg|png|webp))["']/i);
-      if (m) imgSrc = m[1];
+  try { doc=new DOMParser().parseFromString(xml,'application/xml'); } catch(_){ return []; }
+  return [...doc.querySelectorAll('item')].map(item=>{
+    const title=item.querySelector('title')?.textContent?.trim()||'';
+    const href =item.querySelector('link')?.textContent?.trim()||'';
+    const date =item.querySelector('pubDate')?.textContent?.trim()||'';
+    const cats =[...item.querySelectorAll('category')].map(c=>c.textContent.trim());
+    let imgSrc='';
+    const enc=item.querySelector('enclosure');
+    if(enc) imgSrc=enc.getAttribute('url')||'';
+    if(!imgSrc){
+      const desc=item.querySelector('description')?.textContent||'';
+      const m=desc.match(/src=["']([^"']+wp-content\/uploads[^"']+\.(?:jpg|jpeg|png|webp))["']/i);
+      if(m) imgSrc=m[1];
     }
-
-    let dateStr = '';
-    if (date) {
-      try {
-        const d = new Date(date);
-        dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
-      } catch(_) {}
-    }
-
-    return {title, href, imgSrc, cats, date: dateStr};
-  }).filter(a => a.title && a.href);
+    let ds='';
+    if(date){try{const d=new Date(date);ds=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;}catch(_){}}
+    return {title,href,imgSrc,cats,date:ds};
+  }).filter(a=>a.title&&a.href);
 }
 
-function tagClass(n) {
-  n = n.toUpperCase();
-  if (n.includes('GIRLS') || n.includes('GIRL')) return 'tg';
-  if (n.includes('DANGER')) return 'td';
-  if (n.includes('CELEBRITY')) return 'tc';
-  if (n.includes('ANIMAL')) return 'ta';
-  if (n.includes('UFO') || n.includes('UMA')) return 'tu';
-  if (n.includes('MOVIE')) return 'tm';
+// ── プリフェッチ（次ページを裏で先読み） ──
+function prefetchNextPage() {
+  if(prefetchController) prefetchController.abort();
+  prefetchController=new AbortController();
+  const sig=prefetchController.signal;
+  rssRange(page+1).forEach(p=>{
+    if(sig.aborted) return;
+    const url=rssUrl(p);
+    PROXIES.forEach(pf=>{
+      if(sig.aborted) return;
+      fetch(pf(url),{signal:sig,priority:'low'}).catch(()=>{});
+    });
+  });
+}
+
+// ── メインロード ──────────────────────
+async function load() {
+  buildToolbar();
+  setLoading('読み込み中…');
+  fromCache=false;
+
+  const pages=rssRange(page);
+  const results=await Promise.allSettled(pages.map(p=>fetchFast(rssUrl(p))));
+
+  cachedArticles=[];
+  let anyCache=false;
+  for(const r of results){
+    if(r.status==='fulfilled'){
+      cachedArticles.push(...parseRSS(r.value));
+      if(fromCache) anyCache=true;
+    }
+  }
+  fromCache=anyCache;
+
+  if(cachedArticles.length===0){ showError('記事を取得できませんでした。'); return; }
+
+  renderCurrent();
+  prefetchNextPage(); // 次ページを裏で先読み
+}
+
+// ── モード描画 ────────────────────────
+function renderCurrent() {
+  buildToolbar();
+  const arts = random ? shuffle([...cachedArticles]) : cachedArticles;
+  if(mode==='article') renderArticles(arts);
+  else renderMediaMode(arts);
+}
+
+// ── 記事グリッド ──────────────────────
+function renderArticles(arts) {
+  if(imgObserver) imgObserver.disconnect();
+
+  // IntersectionObserver で遅延ロード
+  imgObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const img=entry.target;
+      const src=img.dataset.src;
+      if(src){ img.src=src; img.onload=()=>img.classList.add('loaded'); img.onerror=()=>img.parentElement.innerHTML='<div class="no-thumb">📷</div>'; }
+      imgObserver.unobserve(img);
+    });
+  },{rootMargin:'200px'});
+
+  const frag=document.createDocumentFragment();
+  const grid=document.createElement('div');
+  grid.className='grid-articles';
+
+  arts.forEach(a=>{
+    const card=document.createElement('a');
+    card.className='card'; card.href=a.href; card.target='_blank'; card.rel='noopener noreferrer';
+
+    const thumbWrap=document.createElement('div');
+    thumbWrap.className='thumb-wrap';
+    if(a.imgSrc){
+      const img=document.createElement('img');
+      img.dataset.src=a.imgSrc; img.alt='';
+      thumbWrap.appendChild(img);
+      imgObserver.observe(img);
+    } else {
+      thumbWrap.innerHTML='<div class="no-thumb">📷</div>';
+    }
+
+    const tags=a.cats.length?`<div class="tags">${a.cats.map(c=>`<span class="tag ${tagClass(c)}">${c}</span>`).join('')}</div>`:'';
+    const date=a.date?`<div class="card-date">${a.date}</div>`:'';
+    const body=document.createElement('div');
+    body.className='card-body';
+    body.innerHTML=`${tags}<div class="card-title">${a.title}</div>${date}`;
+
+    card.appendChild(thumbWrap);
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+
+  frag.appendChild(grid);
+  setContent(frag);
+}
+
+// ── 動画/写真モード（逐次レンダリング） ──
+async function renderMediaMode(arts) {
+  setLoading(`メディア抽出中… 0 / ${arts.length}`);
+
+  const grid=document.createElement('div');
+  grid.className='grid-media';
+  const placeholder=document.createElement('div');
+  placeholder.className='status';
+  placeholder.innerHTML=`<div class="spin"></div><br>メディア抽出中…<div class="sub-status">0 / ${arts.length} 件</div><div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>`;
+
+  document.getElementById('content').innerHTML='';
+  document.getElementById('content').appendChild(placeholder);
+  document.getElementById('content').appendChild(grid);
+  updateNav();
+
+  let done=0;
+  const total=arts.length;
+
+  for(let i=0;i<arts.length;i+=MEDIA_CHUNK){
+    const chunk=arts.slice(i,i+MEDIA_CHUNK);
+    const results=await Promise.allSettled(chunk.map(a=>fetchFast(a.href)));
+    results.forEach((r,j)=>{
+      done++;
+      const pct=Math.round(done/total*100);
+      const pbar=document.getElementById('pbar');
+      if(pbar) pbar.style.width=pct+'%';
+      const sub=document.querySelector('.sub-status');
+      if(sub) sub.textContent=`${done} / ${total} 件`;
+      if(r.status!=='fulfilled') return;
+      const items=extractMedia(r.value, chunk[j].href, chunk[j].title);
+      const filtered=items.filter(m=>m.type===(mode==='video'?'video':'photo'));
+      filtered.forEach(m=>{ grid.appendChild(makeMediaCard(m)); });
+    });
+  }
+
+  placeholder.remove();
+  if(grid.children.length===0) showError(`${mode==='video'?'動画':'写真'}が見つかりませんでした。`);
+  updateNav();
+}
+
+function makeMediaCard(m){
+  const card=document.createElement('div');
+  card.className='media-card';
+  let mediaHtml='';
+  if(m.type==='video'){
+    if(/youtube|youtu\.be|nico|dailymotion|streamtape|dood/.test(m.src))
+      mediaHtml=`<iframe src="${m.src}" allowfullscreen loading="lazy"></iframe>`;
+    else
+      mediaHtml=`<video controls preload="none" src="${m.src}"></video>`;
+  } else {
+    mediaHtml=`<img src="${m.src}" loading="lazy" alt="" onerror="this.style.display='none'">`;
+  }
+  const badge=`<span class="media-badge ${m.type==='video'?'badge-video':'badge-photo'}">${m.type==='video'?'VIDEO':'PHOTO'}</span>`;
+  card.innerHTML=mediaHtml+badge+`<a class="media-link" href="${m.articleUrl}" target="_blank" rel="noopener noreferrer">📰 ${m.title}</a>`;
+  return card;
+}
+
+function extractMedia(html, articleUrl, title) {
+  const doc=new DOMParser().parseFromString(html,'text/html');
+  const entry=doc.querySelector('.entry-content,.post-content,.article-body,article,main')||doc.body;
+  const items=[];
+  entry.querySelectorAll('video[src],video source[src]').forEach(el=>{
+    const src=el.src||el.getAttribute('src');
+    if(src&&!src.startsWith('data:')) items.push({type:'video',src,articleUrl,title});
+  });
+  entry.querySelectorAll('iframe[src]').forEach(el=>{
+    const src=el.src;
+    if(src&&/youtube|youtu\.be|nico|dailymotion|streamtape|dood/.test(src))
+      items.push({type:'video',src,articleUrl,title});
+  });
+  entry.querySelectorAll('img[src]').forEach(el=>{
+    const src=el.src||el.getAttribute('src')||'';
+    if(!src.includes('wp-content/uploads')) return;
+    if(/icon|banner|logo|continue|gif_anim/.test(src)) return;
+    const w=parseInt(el.getAttribute('width')||'0');
+    const h=parseInt(el.getAttribute('height')||'0');
+    if(w&&w<100) return; if(h&&h<100) return;
+    if(!items.find(i=>i.src===src)) items.push({type:'photo',src,articleUrl,title});
+  });
+  return items;
+}
+
+// ── ツールバー ────────────────────────
+function buildToolbar() {
+  const bar=document.getElementById('toolbar');
+  bar.innerHTML='';
+
+  CATS.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='cat-btn'+(i===cat?' active':'');
+    b.textContent=c.label;
+    b.onclick=()=>{ cat=i; page=1; random=false; load(); };
+    bar.appendChild(b);
+  });
+
+  addSep(bar);
+
+  [['📰 記事','article'],['🎬 動画','video'],['🖼 写真','photo']].forEach(([label,m])=>{
+    const b=document.createElement('button');
+    b.className='mode-btn'+(mode===m?' active':'');
+    b.textContent=label;
+    b.onclick=()=>{ mode=m; buildToolbar(); renderCurrent(); };
+    bar.appendChild(b);
+  });
+
+  addSep(bar);
+
+  const rb=document.createElement('button');
+  rb.className='toggle-btn'+(random?' on':'');
+  rb.textContent='🔀 ランダム '+(random?'ON':'OFF');
+  rb.onclick=()=>{ random=!random; buildToolbar(); renderCurrent(); };
+  bar.appendChild(rb);
+
+  if(fromCache){
+    const badge=document.createElement('span');
+    badge.className='cache-badge'; badge.textContent='⚡キャッシュ';
+    bar.appendChild(badge);
+  }
+}
+
+function addSep(bar){ const s=document.createElement('div'); s.className='sep'; bar.appendChild(s); }
+
+// ── ユーティリティ ────────────────────
+function tagClass(n){
+  n=n.toUpperCase();
+  if(n.includes('GIRLS')||n.includes('GIRL')) return 'tg';
+  if(n.includes('DANGER')) return 'td';
+  if(n.includes('CELEBRITY')) return 'tc';
+  if(n.includes('ANIMAL')) return 'ta';
+  if(n.includes('UFO')||n.includes('UMA')) return 'tu';
+  if(n.includes('MOVIE')) return 'tm';
   return 'to';
 }
 
-function render(arts) {
-  const grid = document.createElement('div');
-  grid.className = 'grid';
-  arts.forEach(a => {
-    const card = document.createElement('a');
-    card.className = 'card';
-    card.href = a.href;
-    card.target = '_blank';
-    card.rel = 'noopener noreferrer';
-    const img = a.imgSrc
-      ? `<img class="thumb" src="${a.imgSrc}" loading="lazy" alt="" onerror="this.outerHTML='<div class=no-thumb>📷</div>'">`
-      : `<div class="no-thumb">📷</div>`;
-    const tags = a.cats.length
-      ? `<div class="tags">${a.cats.map(c=>`<span class="tag ${tagClass(c)}">${c}</span>`).join('')}</div>`
-      : '';
-    const date = a.date ? `<div class="card-date">${a.date}</div>` : '';
-    card.innerHTML = img + `<div class="card-body">${tags}<div class="card-title">${a.title}</div>${date}</div>`;
-    grid.appendChild(card);
-  });
-  document.getElementById('content').innerHTML = '';
-  document.getElementById('content').appendChild(grid);
-  window.scrollTo({top:0, behavior:'smooth'});
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+function setContent(el){
+  document.getElementById('content').innerHTML='';
+  document.getElementById('content').appendChild(el);
+  window.scrollTo({top:0,behavior:'smooth'});
   updateNav();
 }
 
-function setLoading() {
-  document.getElementById('content').innerHTML = '<div class="status"><div class="spin"></div><br>読み込み中…</div>';
+function setLoading(msg){
+  document.getElementById('content').innerHTML=`<div class="status"><div class="spin"></div><br>${msg}</div>`;
   updateNav();
 }
 
-function showError(msg) {
-  document.getElementById('content').innerHTML =
-    `<div class="status err">読み込みに失敗しました。<br><small>${msg}</small><br>
-    <button class="retry-btn" onclick="load()">再試行</button></div>`;
+function showError(msg){
+  document.getElementById('content').innerHTML=
+    `<div class="status err">${msg}<br><button class="retry-btn" onclick="load()">再試行</button></div>`;
 }
 
-function updateNav() {
-  ['p1','p2'].forEach(id => document.getElementById(id).disabled = page <= 1);
-  ['n1','n2'].forEach(id => document.getElementById(id).disabled = false);
-  ['pi','pi2'].forEach(id => document.getElementById(id).textContent = `${page} ページ`);
+function updateNav(){
+  ['p1','p2'].forEach(id=>document.getElementById(id).disabled=page<=1);
+  ['n1','n2'].forEach(id=>document.getElementById(id).disabled=false);
+  ['pi','pi2'].forEach(id=>document.getElementById(id).textContent=`${page} ページ`);
 }
 
-function go(d) { if(page+d<1) return; page+=d; load(); }
+function go(d){ if(page+d<1)return; page+=d; load(); }
 
-buildCatBar();
+// ── 起動 ──────────────────────────────
+buildToolbar();
 load();
 </script>
 </body>
