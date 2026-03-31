@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポッカキット ビューアー</title>
+<style>
+:root {
+  --bg:#0f0f0f; --surface:#1a1a1a; --surface2:#242424;
+  --border:#2e2e2e; --text:#e8e8e8; --muted:#777;
+  --accent:#c0392b; --accent2:#e74c3c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pro','Meiryo',sans-serif;min-height:100vh}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+h1{font-size:17px;font-weight:700;color:var(--accent2);letter-spacing:1px;white-space:nowrap}
+.nav{display:flex;align-items:center;gap:8px;margin-left:auto}
+.page-btn{padding:5px 13px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;transition:border-color .15s;white-space:nowrap}
+.page-btn:hover{border-color:var(--accent2)}
+.page-btn:disabled{opacity:.3;cursor:default}
+.page-info{font-size:12px;color:var(--muted);white-space:nowrap;min-width:70px;text-align:center}
+.cat-bar{display:flex;gap:6px;flex-wrap:wrap}
+.cat-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.cat-btn:hover{border-color:var(--accent2);color:var(--text)}
+.cat-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+main{padding:16px;max-width:1400px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;text-decoration:none;display:block}
+.card:hover{transform:translateY(-2px);border-color:var(--accent2)}
+.thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--surface2)}
+.no-thumb{width:100%;aspect-ratio:16/9;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:28px}
+.card-body{padding:10px 12px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.tg{background:#4a1535;color:#f9a}
+.td{background:#3a0f0f;color:#f88}
+.tc{background:#1a2a4a;color:#8af}
+.ta{background:#1a3a1a;color:#8f8}
+.tu{background:#2a2a4a;color:#aaf}
+.to{background:#2a2a2a;color:#aaa}
+.tm{background:#2a1a3a;color:#c9f}
+.card-title{font-size:13px;line-height:1.5;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-date{margin-top:6px;font-size:11px;color:var(--muted)}
+.status{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+.spin{display:inline-block;width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{color:#f88}
+.retry-btn{margin-top:12px;padding:7px 18px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit}
+.retry-btn:hover{border-color:var(--accent2)}
+.bottom-nav{display:flex;align-items:center;gap:8px;justify-content:center;padding:24px 16px 32px}
+@media(max-width:560px){
+  h1{font-size:14px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .card-title{font-size:12px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <h1>ポッカキット Viewer</h1>
+    <div class="nav">
+      <button class="page-btn" id="p1" onclick="go(-1)">◀ 前</button>
+      <span class="page-info" id="pi">-</span>
+      <button class="page-btn" id="n1" onclick="go(1)">次 ▶</button>
+    </div>
+  </div>
+  <div class="cat-bar" id="catBar"></div>
+</header>
+
+<main><div id="content" class="status"><div class="spin"></div><br>読み込み中…</div></main>
+
+<div class="bottom-nav">
+  <button class="page-btn" id="p2" onclick="go(-1)">◀ 前のページ</button>
+  <span class="page-info" id="pi2">-</span>
+  <button class="page-btn" id="n2" onclick="go(1)">次のページ ▶</button>
+</div>
+
+<script>
+// カテゴリ定義
+const CATS = [
+  {label:'全て',     base:'https://www.po-kaki-to.com'},
+  {label:'エロ',     base:'https://www.po-kaki-to.com/archives/cat_201407'},
+  {label:'閲覧注意', base:'https://www.po-kaki-to.com/archives/cat_198611'},
+  {label:'芸能',     base:'https://www.po-kaki-to.com/archives/cat_157950'},
+  {label:'動物',     base:'https://www.po-kaki-to.com/archives/cat_154305'},
+  {label:'UFO&UMA', base:'https://www.po-kaki-to.com/archives/cat_157951'},
+  {label:'その他',   base:'https://www.po-kaki-to.com/archives/cat_156879'},
+];
+
+// 1ページあたりの件数（RSSを複数ページ分まとめて取得）
+const ARTICLES_PER_VIEW = 50;
+// RSSは1フィードあたり10件固定なので5ページ分並列取得
+const RSS_PAGES_PER_VIEW = 5;
+
+let cat = 0, page = 1;
+
+// CORSプロキシ（並列で全部投げて最速を使う）
+const PROXIES = [
+  u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+];
+
+// 並列fetch：一番早く返ってきたものを採用
+async function fetchFast(url) {
+  return Promise.any(
+    PROXIES.map(pf =>
+      fetch(pf(url), {signal: AbortSignal.timeout(7000)})
+        .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+        .then(t => {
+          try { const j=JSON.parse(t); if(j.contents) return j.contents; } catch(_){}
+          return t;
+        })
+    )
+  );
+}
+
+// RSSのURLを作る（WordPressのfeed、posts_per_page指定）
+function rssUrl(rssPaged) {
+  const b = CATS[cat].base;
+  // posts_per_page はサーバー側設定依存だが paged で複数ページ取れる
+  return `${b}/feed/?paged=${rssPaged}`;
+}
+
+// viewページ番号 → RSSの開始pagedを計算
+// viewPage=1 → rssPages 1〜5、viewPage=2 → 6〜10 ...
+function rssPageRange(viewPage) {
+  const start = (viewPage - 1) * RSS_PAGES_PER_VIEW + 1;
+  return Array.from({length: RSS_PAGES_PER_VIEW}, (_, i) => start + i);
+}
+
+function buildCatBar() {
+  const bar = document.getElementById('catBar');
+  CATS.forEach((c,i) => {
+    const b = document.createElement('button');
+    b.className = 'cat-btn' + (i===0?' active':'');
+    b.textContent = c.label;
+    b.onclick = () => { cat=i; page=1; selectCat(i); load(); };
+    bar.appendChild(b);
+  });
+}
+
+function selectCat(i) {
+  document.querySelectorAll('.cat-btn').forEach((b,j) => b.classList.toggle('active', i===j));
+}
+
+async function load() {
+  setLoading();
+
+  const pages = rssPageRange(page);
+
+  // 複数RSSページを並列取得
+  const results = await Promise.allSettled(pages.map(p => fetchFast(rssUrl(p))));
+
+  const articles = [];
+  for (const r of results) {
+    if (r.status === 'fulfilled') {
+      articles.push(...parseRSS(r.value));
+    }
+  }
+
+  if (articles.length === 0) {
+    showError('記事を取得できませんでした。プロキシが混雑している可能性があります。');
+    return;
+  }
+
+  render(articles);
+}
+
+function parseRSS(xml) {
+  let doc;
+  try {
+    doc = new DOMParser().parseFromString(xml, 'application/xml');
+  } catch(_) { return []; }
+
+  return [...doc.querySelectorAll('item')].map(item => {
+    const title = item.querySelector('title')?.textContent?.trim() || '';
+    const href  = item.querySelector('link')?.textContent?.trim() || '';
+    const date  = item.querySelector('pubDate')?.textContent?.trim() || '';
+    const cats  = [...item.querySelectorAll('category')].map(c => c.textContent.trim());
+
+    let imgSrc = '';
+    const enc = item.querySelector('enclosure');
+    if (enc) imgSrc = enc.getAttribute('url') || '';
+    if (!imgSrc) {
+      const desc = item.querySelector('description')?.textContent || '';
+      const m = desc.match(/src=["']([^"']+wp-content\/uploads[^"']+\.(?:jpg|jpeg|png|webp))["']/i);
+      if (m) imgSrc = m[1];
+    }
+
+    let dateStr = '';
+    if (date) {
+      try {
+        const d = new Date(date);
+        dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+      } catch(_) {}
+    }
+
+    return {title, href, imgSrc, cats, date: dateStr};
+  }).filter(a => a.title && a.href);
+}
+
+function tagClass(n) {
+  n = n.toUpperCase();
+  if (n.includes('GIRLS') || n.includes('GIRL')) return 'tg';
+  if (n.includes('DANGER')) return 'td';
+  if (n.includes('CELEBRITY')) return 'tc';
+  if (n.includes('ANIMAL')) return 'ta';
+  if (n.includes('UFO') || n.includes('UMA')) return 'tu';
+  if (n.includes('MOVIE')) return 'tm';
+  return 'to';
+}
+
+function render(arts) {
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  arts.forEach(a => {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = a.href;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    const img = a.imgSrc
+      ? `<img class="thumb" src="${a.imgSrc}" loading="lazy" alt="" onerror="this.outerHTML='<div class=no-thumb>📷</div>'">`
+      : `<div class="no-thumb">📷</div>`;
+    const tags = a.cats.length
+      ? `<div class="tags">${a.cats.map(c=>`<span class="tag ${tagClass(c)}">${c}</span>`).join('')}</div>`
+      : '';
+    const date = a.date ? `<div class="card-date">${a.date}</div>` : '';
+    card.innerHTML = img + `<div class="card-body">${tags}<div class="card-title">${a.title}</div>${date}</div>`;
+    grid.appendChild(card);
+  });
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('content').appendChild(grid);
+  window.scrollTo({top:0, behavior:'smooth'});
+  updateNav();
+}
+
+function setLoading() {
+  document.getElementById('content').innerHTML = '<div class="status"><div class="spin"></div><br>読み込み中…</div>';
+  updateNav();
+}
+
+function showError(msg) {
+  document.getElementById('content').innerHTML =
+    `<div class="status err">読み込みに失敗しました。<br><small>${msg}</small><br>
+    <button class="retry-btn" onclick="load()">再試行</button></div>`;
+}
+
+function updateNav() {
+  ['p1','p2'].forEach(id => document.getElementById(id).disabled = page <= 1);
+  ['n1','n2'].forEach(id => document.getElementById(id).disabled = false);
+  ['pi','pi2'].forEach(id => document.getElementById(id).textContent = `${page} ページ`);
+}
+
+function go(d) { if(page+d<1) return; page+=d; load(); }
+
+buildCatBar();
+load();
+</script>
+</body>
+</html>
